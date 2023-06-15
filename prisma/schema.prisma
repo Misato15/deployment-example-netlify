@@ -1,34 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id]) // renamed from `User` -> `author`
-  authorId  Int // relation scalar field
+
+model Animal {
+  id        String  @id @default(uuid())
+  name      String
+  size      String
+  age       Int
+  color     String
+  gender   Gender? @relation(fields: [gender_id], references: [id])
+  gender_id String?
+  specie    String
+  photo_url String?
+  keeper    Keeper? @relation(fields: [keeper_id], references: [id])
+  keeper_id String?
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  userId Int     @unique // relation scalar field
-  user   User    @relation(fields: [userId], references: [id]) // renamed from `User` -> `user`
+model Keeper {
+  id     String   @id @default(uuid())
+  name   String
+  age    Int
+  gender String
+  animal Animal[]
 }
 
-model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[] // renamed from `Post` -> `posts`
-  profile Profile? // renamed from `User` -> `profile`
+model Gender {
+  id     String   @id @default(uuid())  
+  gender String
+  animal Animal[]
 }
